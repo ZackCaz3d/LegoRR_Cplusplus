@@ -3,7 +3,8 @@
 class ReadCFG
 {
 public:
-	Thingy *ReadCFG::P1(Thingy *LegoCFG, char *Path);
+	char *ReadCFG::GetValueFromThingy(Thingy *LegoCFG, char *Path);
+	int ReadCFG::CheckIfValueValid(Thingy *LegoCFG, char *Path, float *a3, float *a4, float *a5);
 };
 
 extern ReadCFG CFGLOADER;

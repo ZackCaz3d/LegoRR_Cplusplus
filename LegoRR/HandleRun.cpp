@@ -21,6 +21,9 @@ int SetStranges();
 
 int __stdcall HandleRun::WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	float a3;
+	float a4;
+	float a5;
 	int NOSOUND = 0;
 	int CDINSIST = 0;
 	char Name[128];
@@ -86,7 +89,12 @@ int __stdcall HandleRun::WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, L
 		handleRun.Global_LegoCFG = wrap.ReadCFG("Lego.cfg");
 		if (handleRun.Global_LegoCFG) {
 			Main_ToolTipRGB = JoinWithColons(LegoRR, "Main", "ToolTipRGB", 0);
-			CFGLOADER.P1(handleRun.Global_LegoCFG, Main_ToolTipRGB);
+			if (!CFGLOADER.CheckIfValueValid(Global_LegoCFG, Main_ToolTipRGB, &a3, &a4, &a5))
+			{
+				a5 = 0.32549021;
+				a4 = 0.32549021;
+				a3 = 0.32549021;
+			}
 		}
 		return 0;
 	}

@@ -10,9 +10,11 @@ ReadCFG CFGLOADER;
 
 int __cdecl sub_477700(char *Block, char *String, char *Colons);
 vector<string> explode(const string& str, const char& ch);
+Thingy *GetValueThingy(Thingy *LegoCFG, char *Path);
 
-Thingy *ReadCFG::P1(Thingy *LegoCFG, char *Path)
+Thingy *GetValueThingy(Thingy *LegoCFG, char *Path)
 {
+	char *path2 = Path;
 	int Depth_Variables; // eax
 	Thingy *v3; // ebx
 	int v4; // ebp
@@ -167,4 +169,56 @@ vector<string> explode(const string& str, const char& ch) {
 	if (!next.empty())
 		result.push_back(next);
 	return result;
+}
+char *ReadCFG::GetValueFromThingy(Thingy *LegoCFG, char *Path)
+{
+	Thingy *v2; // eax
+	Thingy *Thing; // esi
+	char *Value; // edi
+	char *result; // eax
+
+	Thing = GetValueThingy(LegoCFG, Path);
+	if (!Thing)
+		return 0;
+	Value = Thing->Value;
+	if (!Value)
+		return 0;
+	result = (char *)malloc(strlen(Value) + 1);
+	strcpy(result, Thing->Value);
+	return result;
+}
+int ReadCFG::CheckIfValueValid(Thingy *LegoCFG, char *Path, float *a3, float *a4, float *a5)
+{
+	int v5; // edi
+	char *v6; // eax
+	char *v7; // esi
+	int v8; // eax
+	int v9; // eax
+	const char *v11; // [esp-4h] [ebp-1A0h]
+	const char *v12; // [esp-4h] [ebp-1A0h]
+	char *String[100]; // [esp+Ch] [ebp-190h] BYREF
+	char* Path2 = (char*)malloc(sizeof(char) * 260);
+
+	memcpy(Path2, Path, sizeof(Path));
+	//Path2 = Path;
+
+	v5 = 0;
+	v6 = CFGLOADER.GetValueFromThingy(LegoCFG, Path2);
+	v7 = v6;
+	if (v6)
+	{
+		if (sub_477700(v6, (char *)String, ":") == 3)
+		{
+			v8 = atoi(String[0]);
+			v11 = String[1];
+			*a3 = (double)v8 * 0.0039215689;
+			v9 = atoi(v11);
+			v12 = String[2];
+			*a4 = (double)v9 * 0.0039215689;
+			v5 = 1;
+			*a5 = (double)atoi(v12) * 0.0039215689;
+		}
+		free(v7);
+	}
+	return v5;
 }
