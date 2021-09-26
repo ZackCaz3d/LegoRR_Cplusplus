@@ -112,8 +112,7 @@ char *JoinWithColons(char *a1, char *a2, ...)
 	char *val;
 	int i;
 	va_list va; // [esp+18h] [ebp+Ch] BYREF
-	char LEGORR[1024];
-	memset(LEGORR, 0x00, sizeof(LEGORR));
+	char *LEGORR = (char*)malloc(sizeof(char) * 256);
 	va_start(va, a2);
 	Main = a2;
 	va_copy(ToolTipSRGB, va);

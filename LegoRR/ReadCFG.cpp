@@ -14,7 +14,6 @@ Thingy *GetValueThingy(Thingy *LegoCFG, char *Path);
 
 Thingy *GetValueThingy(Thingy *LegoCFG, char *Path)
 {
-	char *path2 = Path;
 	int Depth_Variables; // eax
 	Thingy *v3; // ebx
 	int v4; // ebp
@@ -129,7 +128,8 @@ int __cdecl sub_477700(char *Block, char *String, char *Colons)
 		return 0;
 	v6 = 1;
 	String = Block;
-	
+
+
 	if (*Block)
 	{
 		v7 = String + 4;
@@ -197,23 +197,21 @@ int ReadCFG::CheckIfValueValid(Thingy *LegoCFG, char *Path, float *a3, float *a4
 	const char *v11; // [esp-4h] [ebp-1A0h]
 	const char *v12; // [esp-4h] [ebp-1A0h]
 	char *String[100]; // [esp+Ch] [ebp-190h] BYREF
-	char* Path2 = (char*)malloc(sizeof(char) * 260);
-
-	memcpy(Path2, Path, sizeof(Path));
-	//Path2 = Path;
 
 	v5 = 0;
-	v6 = CFGLOADER.GetValueFromThingy(LegoCFG, Path2);
+	v6 = CFGLOADER.GetValueFromThingy(LegoCFG, Path);
 	v7 = v6;
+	std::string blockstring(v6);
+	std::vector<std::string> splits = explode(blockstring, '::');
 	if (v6)
 	{
 		if (sub_477700(v6, (char *)String, ":") == 3)
 		{
-			v8 = atoi(String[0]);
-			v11 = String[1];
+			v8 = atoi(splits[0].c_str());
+			v11 = splits[1].c_str();
 			*a3 = (double)v8 * 0.0039215689;
 			v9 = atoi(v11);
-			v12 = String[2];
+			v12 = splits[2].c_str();
 			*a4 = (double)v9 * 0.0039215689;
 			v5 = 1;
 			*a5 = (double)atoi(v12) * 0.0039215689;
