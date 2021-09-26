@@ -95,6 +95,7 @@ int __stdcall HandleRun::WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, L
 				a4 = 0.32549021;
 				a3 = 0.32549021;
 			}
+			free(Main_ToolTipRGB);
 		}
 		return 0;
 	}
