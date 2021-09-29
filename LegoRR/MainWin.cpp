@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainWin.h"
+#include "WAD.h"
 #include <io.h>
 #include <windows.h>
 #include <direct.h>
@@ -41,9 +42,9 @@ FILE *__cdecl MainWin::Validity_Check(char *a1, int CDINSIST, char *Type) {
 	sprintf(Main.Local_Data_Folder, "%s\\%s", WorkingDirectory, "Data");
 	for (i = 0; i < 0xA; ++i)
 	{
-		sprintf((char *const)&Buffer, "%s%i.wad", a1, i);
-		//if (ReadWad((char *)&Buffer) != -1)
-		//	EmptyWad = 1;
+		sprintf((char *)&Buffer, "%s%i.wad", a1, i);
+		if (wadload.ReadWad((char *)&Buffer) != -1)
+			EmptyWad = 1;
 	}
 	_getcwd(LRR_Data_Path, 260);
 	strcat(LRR_Data_Path, "\\Data");
