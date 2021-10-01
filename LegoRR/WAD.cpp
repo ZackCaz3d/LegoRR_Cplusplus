@@ -2,16 +2,18 @@
 #include "WAD.h"
 #include <stdlib.h>  
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include "MainWin.h"
 
-int __cdecl sub_48B760(FILE *Stream, int* a2);
+using std::string;
+
+int __cdecl sub_48B760(FILE *Stream, char* a2);
 WAD wadload;
 
 int __cdecl WAD::ReadWad(char *FileName)
 {
 	int v1; // ebp
-	stWAD *WADs = (stWAD*)malloc(32);
+	stWAD *WADs = new stWAD;
 	FILE *v3; // esi
 	stWAD *v5; // eax
 	stWAD *v6; // eax
@@ -72,7 +74,7 @@ int __cdecl WAD::ReadWad(char *FileName)
 	WADs->dword_04 = 1;
 	if (fread(Buffer, 1u, 4u, v3) != 4)
 	{
-	LABEL_75:
+	NOTVALIDWAD:
 		fclose(v3);
 		return -1;
 	}
@@ -85,64 +87,66 @@ int __cdecl WAD::ReadWad(char *FileName)
 	v3 = Stream;
 	v5 = WADs;
 	if (fread(&v5->dword_20, 1u, 4u, Stream) != 4)
-		goto LABEL_75;
+		goto NOTVALIDWAD;
 	v6 = WADs;
-	v7 = (char *)malloc(4 * v6->dword_20);
-	WADs->dword_18 = v7;
+	//v7 = (char *)malloc(4 * v6->dword_20);
+	//WADs->dword_18 = v7;
 	v8 = WADs;
-	v9 = (char *)malloc(4 * v8->dword_20);
-	WADs->dword_14 = v9;
-	if (!WADs->dword_18 || !WADs->dword_14)
+	//v9 = (char *)malloc(4 * v8->dword_20);
+	//WADs->dword_14 = v9;
+	int size = v6->dword_20;
+	WADs->dword_18.clear();
+	WADs->dword_18.reserve(size);
+	WADs->dword_14.clear();
+	WADs->dword_14.reserve(size);
+	if (!WADs->dword_18.empty() || !WADs->dword_14.empty())
 	{
 		fclose(Stream);
-		if (WADs->dword_18)
+		if (!WADs->dword_14.empty())
 		{
-			v39 = WADs;
-			free(v39->dword_18);
-		}
-		if (WADs->dword_14)
-		{
-			v40 = WADs;
-			free(v40->dword_14);
+			WADs->dword_14.clear();
 		}
 		return -1;
 	}
 	v47 = 4 * WADs->dword_20;
-	memset(WADs->dword_18, 0, v47);
+	//memset(WADs->dword_18, 1, v47);
 	v48 = 4 * WADs->dword_20;
-	memset(WADs->dword_14, 0, v48);
+	//memset(WADs->dword_14, 0, v48);
+
+	//*&WADs->dword_18 = new string[size];
 	if (WADs->dword_20 > 0)
 	{
-		while (sub_48B760(v3, (int*)v50))
+
+		while (sub_48B760(v3, v50))
 		{
-			v10 = malloc(strlen(v50) + 1);
-			((char *)*&WADs->dword_18)[v1] = (char)v10;
-			strcpy(((char **)&WADs->dword_18)[v1], v50);
+			//v10 = malloc(strlen(v50) + 1);
+			//((char *)*&WADs->dword_18)[v1] = (char)v10;
+			//memset(WADs->dword_18, 1, strlen(v50) + 1);
+			WADs->dword_18.insert(WADs->dword_18.begin() + v1, v50);
+			//strcpy(((char **)&WADs->dword_18)[v1], v50);
 			v11 = WADs;
-			Main.Error_Handle("%s\n", (*&v11->dword_18)[v1++]);
+			//char potato = (*&v11->dword_18)[v1++];
+			v1++;
+			//Main.Error_Handle("%s\n", (*&v11->dword_18)[v1++]);
 			if (v1 >= WADs->dword_20)
 				goto LABEL_15;
 			v3 = Stream;
 		}
-		if (WADs->dword_18)
+		if (!WADs->dword_18.empty())
 		{
 			for (i = 0; i < WADs->dword_20; ++i)
 			{
-				if (((char *)*&WADs->dword_18)[i])
+				if (WADs->dword_18[i].c_str())
 				{
-					v42 = WADs;
-					free((void*)(((char *)*&v42->dword_18)[i]));
+					WADs->dword_18.erase(WADs->dword_18.begin() + i);
 				}
 			}
-			v43 = WADs;
-			free(v43->dword_18);
 		}
-		if (WADs->dword_14)
+		if (!WADs->dword_14.empty())
 		{
-			v44 = WADs;
-			free(v44->dword_14);
+			WADs->dword_14.clear();
 		}
-		goto LABEL_75;
+		goto NOTVALIDWAD;
 	}
 LABEL_15:
 	v12 = 0;
@@ -154,31 +158,29 @@ LABEL_15:
 		WADs->Malloc1 = WADs3;
 		if (!WADs->Malloc1)
 		{
-			if (WADs->dword_14)
+			if (!WADs->dword_14.empty())
 			{
 				for (j = 0; j < WADs->dword_20; ++j)
 				{
-					if (*&WADs->dword_18[4 * j])
+					if (WADs->dword_18[j].c_str())
 					{
 						WADs5 = WADs;
 						free(*(void **)&WADs5->dword_18[4 * j]);
 					}
 				}
 				WADs6 = WADs;
-				free(WADs6->dword_18);
+				WADs6->dword_18.clear();
 			}
-			if (WADs->dword_14)
+			if (!WADs->dword_14.empty())
 			{
 				for (k = 0; k < WADs->dword_20; ++k)
 				{
-					if (*&WADs->dword_14[4 * k])
+					if (WADs->dword_14[k].c_str())
 					{
-						WADs8 = WADs;
-						free(*(void **)&WADs8->dword_14[4 * k]);
+						WADs->dword_14.erase(WADs->dword_14.begin() + k);
 					}
 				}
-				WADs9 = WADs;
-				free(WADs9->dword_14);
+				WADs->dword_14.clear();
 			}
 			goto LABEL_6;
 		}
@@ -188,31 +190,30 @@ LABEL_15:
 		v31 = fread(v30->Malloc1, 1u, v45, Stream);
 		if (v31 == 16 * WADs->dword_20)
 			return (int)WADs;
-		if (WADs->dword_14)
+		if (!WADs->dword_14.empty())
 		{
 			for (l = 0; l < WADs->dword_20; ++l)
 			{
-				if (((char*)*&WADs->dword_18)[l])
+				if (!WADs->dword_18[l].empty())
 				{
 					v33 = WADs;
-					free((void *)((char *)*&v33->dword_18)[l]);
+					v33->dword_18.erase(v33->dword_18.begin() + l);
 				}
 			}
 			v34 = WADs;
-			free(v34->dword_18);
+			v34->dword_18.clear();
 		}
-		if (WADs->dword_14)
+		if (!WADs->dword_14.empty())
 		{
 			for (m = 0; m < WADs->dword_20; ++m)
 			{
-				if (*&WADs->dword_14[4 * m])
+				if (WADs->dword_14[m].c_str())
 				{
 					v36 = WADs;
 					free(*(void **)&v36->dword_14[4 * m]);
 				}
 			}
-			v37 = WADs;
-			free(v37->dword_14);
+			WADs->dword_14.clear();
 		}
 		if (WADs->Malloc1)
 		{
@@ -226,45 +227,46 @@ LABEL_15:
 	while (1)
 	{
 		v13 = Stream;
-		if (!sub_48B760(Stream, (int*)v50))
+		if (!sub_48B760(Stream, v50))
 			break;
-		v14 = malloc(strlen(v50) + 1);
-		*&WADs->dword_14[4 * v12] = (char)v14;
-		strcpy(*(char **)&WADs->dword_14[4 * v12], v50);
-		v15 = WADs;
-		Main.Error_Handle("%s\n", *(const char **)&v15->dword_14[4 * v12++]);
+		WADs->dword_14.insert(WADs->dword_14.begin() + v12, v50);
+		//v14 = malloc(strlen(v50) + 1);
+		//*&WADs->dword_14[4 * v12] = (char)v14;
+		//strcpy(*(char **)&WADs->dword_14[4 * v12], v50);
+		//v15 = WADs;
+		//Main.Error_Handle("%s\n", *(const char **)&v15->dword_14[4 * v12++]);
+		v12++;
 		if (v12 >= WADs->dword_20)
 			goto LABEL_31;
 	}
-	if (WADs->dword_14)
+	if (!WADs->dword_14.empty())
 	{
 		for (n = 0; n < WADs->dword_20; ++n)
 		{
-			if (*&WADs->dword_18[4 * n])
+			if ((*&WADs->dword_18[n]).c_str())
 			{
 				v17 = WADs;
 				free(*(void **)&v17->dword_18[4 * n]);
 			}
 		}
 		v18 = WADs;
-		free(v18->dword_18);
+		v18->dword_18.clear();
 	}
-	if (!WADs->dword_14)
+	if (WADs->dword_14.empty())
 		goto LABEL_60;
 	for (ii = 0; ii < WADs->dword_20; ++ii)
 	{
-		if (*&WADs->dword_14[4 * ii])
+		if (WADs->dword_14[ii].c_str())
 		{
 			WADs0 = WADs;
 			free(*(void **)&WADs0->dword_14[4 * ii]);
 		}
 	}
-	WADs1 = WADs;
-	free(WADs1->dword_14);
+	WADs->dword_14.clear();
 	fclose(Stream);
 	return -1;
 }
-int __cdecl sub_48B760(FILE *Stream, int* a2)
+int __cdecl sub_48B760(FILE *Stream, char* a2)
 {
 	char i; // al
 

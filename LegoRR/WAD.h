@@ -1,4 +1,8 @@
+#include <string>
+#include <vector>
 #pragma once
+using std::string;
+using std::vector;
 
 struct stWAD
 {
@@ -7,8 +11,8 @@ struct stWAD
 	int dword_08;
 	int dword_0c;
 	FILE *FileStream;
-	char *dword_14;
-	char *dword_18;
+	std::vector<std::string> dword_14;
+	std::vector<std::string> dword_18;
 	void *Malloc1;
 	int dword_20;
 };
